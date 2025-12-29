@@ -48,7 +48,12 @@ def load_datasets(
     """Загрузить подготовленные выборки (features.csv с колонкой default_payment)."""
     training_data = pd.read_csv(train_path)
     testing_data = pd.read_csv(test_path)
-    return training_data.drop(columns=["default_payment"]), training_data["default_payment"], testing_data.drop(columns=["default_payment"]), testing_data["default_payment"]
+    return (
+        training_data.drop(columns=["default_payment"]),
+        training_data["default_payment"],
+        testing_data.drop(columns=["default_payment"]),
+        testing_data["default_payment"],
+    )
 
 
 def compute_classification_metrics(
@@ -238,13 +243,21 @@ def train_credit_risk_model(
 
         # Артефакты
         Path("trained_models").mkdir(parents=True, exist_ok=True)
-        mlflow.log_artifact(generate_roc_curve_plot(y_test, y_proba, "trained_models/roc_curve.png"))
-        mlflow.log_artifact(generate_precision_recall_curve_plot(y_test, y_proba, "trained_models/pr_curve.png"))
         mlflow.log_artifact(
-            generate_confusion_matrix_plot(y_test, y_pred_default, "trained_models/confusion_default.png", "CM @0.5")
+            generate_roc_curve_plot(y_test, y_proba, "trained_models/roc_curve.png")
         )
         mlflow.log_artifact(
-            generate_confusion_matrix_plot(y_test, y_pred_best, "trained_models/confusion_best.png", "CM @best-thr")
+            generate_precision_recall_curve_plot(y_test, y_proba, "trained_models/pr_curve.png")
+        )
+        mlflow.log_artifact(
+            generate_confusion_matrix_plot(
+                y_test, y_pred_default, "trained_models/confusion_default.png", "CM @0.5"
+            )
+        )
+        mlflow.log_artifact(
+            generate_confusion_matrix_plot(
+                y_test, y_pred_best, "trained_models/confusion_best.png", "CM @best-thr"
+            )
         )
 
         # Сохранение модели и метрик
@@ -271,7 +284,8 @@ def train_credit_risk_model(
 def main() -> None:
     configuration = load_configuration()
     X_train, y_train, X_test, y_test = load_datasets(
-        configuration["dataset"]["train_features_location"], configuration["dataset"]["test_features_location"]
+        configuration["dataset"]["train_features_location"],
+        configuration["dataset"]["test_features_location"],
     )
     print(f"Train: {X_train.shape} | Test: {X_test.shape}")
     _, metrics = train_credit_risk_model(X_train, y_train, X_test, y_test, configuration)

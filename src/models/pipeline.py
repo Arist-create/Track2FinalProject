@@ -18,12 +18,34 @@ def get_feature_columns():
     - Low-cardinality categorical features
     """
     numeric_features = [
-        "limit_bal", "age",
-        "pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6",
-        "bill_amt1", "bill_amt2", "bill_amt3", "bill_amt4", "bill_amt5", "bill_amt6",
-        "pay_amt1", "pay_amt2", "pay_amt3", "pay_amt4", "pay_amt5", "pay_amt6",
-        "utilization_last", "pay_delay_sum", "pay_delay_max",
-        "bill_trend", "pay_trend", "bill_avg", "pay_amt_avg", "pay_to_bill_ratio",
+        "limit_bal",
+        "age",
+        "pay_0",
+        "pay_2",
+        "pay_3",
+        "pay_4",
+        "pay_5",
+        "pay_6",
+        "bill_amt1",
+        "bill_amt2",
+        "bill_amt3",
+        "bill_amt4",
+        "bill_amt5",
+        "bill_amt6",
+        "pay_amt1",
+        "pay_amt2",
+        "pay_amt3",
+        "pay_amt4",
+        "pay_amt5",
+        "pay_amt6",
+        "utilization_last",
+        "pay_delay_sum",
+        "pay_delay_max",
+        "bill_trend",
+        "pay_trend",
+        "bill_avg",
+        "pay_amt_avg",
+        "pay_to_bill_ratio",
     ]
 
     categorical_features = ["sex", "education", "marriage", "age_bin"]
@@ -51,11 +73,14 @@ def create_preprocessor():
         steps=[
             ("imputer", SimpleImputer(strategy="most_frequent")),
             # ✅ no sparse warnings, future-proof API
-            ("onehot", OneHotEncoder(
-                handle_unknown="ignore",
-                drop=None,
-                sparse_output=False  # <-- replaces deprecated `sparse`
-            )),
+            (
+                "onehot",
+                OneHotEncoder(
+                    handle_unknown="ignore",
+                    drop=None,
+                    sparse_output=False,  # <-- replaces deprecated `sparse`
+                ),
+            ),
         ]
     )
 

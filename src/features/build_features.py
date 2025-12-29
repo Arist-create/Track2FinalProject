@@ -60,26 +60,35 @@ def engineer_features(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     # 1) Возраст в категории
     age_bins = config["feature_engineering"]["age_bins"]
     age_labels = config["feature_engineering"]["age_labels"]
-    processed_df["age_bin"] = pd.cut(processed_df["age"], bins=age_bins, labels=age_labels, include_lowest=True)
+    processed_df["age_bin"] = pd.cut(
+        processed_df["age"], bins=age_bins, labels=age_labels, include_lowest=True
+    )
 
     # 2) Utilization last month (bill_amt1 / limit_bal)
     #    Безопасное деление, клип на [0, 2]
     denominator = np.where(processed_df["limit_bal"] > 0, processed_df["limit_bal"], np.nan)
-    processed_df["utilization_last"] = (processed_df["bill_amt1"] / denominator).fillna(0.0).clip(0, 2)
+    processed_df["utilization_last"] = (
+        (processed_df["bill_amt1"] / denominator).fillna(0.0).clip(0, 2)
+    )
 
     # 3) Сумма задержек (сколько месяцев с просрочкой > 0)
-    processed_df["pay_delay_sum"] = (processed_df[PAYMENT_STATUS_COLUMNS].values > 0).sum(axis=1).astype(np.int16)
+    processed_df["pay_delay_sum"] = (
+        (processed_df[PAYMENT_STATUS_COLUMNS].values > 0).sum(axis=1).astype(np.int16)
+    )
 
     # 4) Максимальная задержка
     processed_df["pay_delay_max"] = processed_df[PAYMENT_STATUS_COLUMNS].max(axis=1)
 
     # 5) Тренд задолженности за 3 месяца: (bill1 - bill3) / (|bill3| + 1)
     processed_df["bill_trend"] = (
-        (processed_df["bill_amt1"] - processed_df["bill_amt3"]) / (processed_df["bill_amt3"].abs() + 1.0)
+        (processed_df["bill_amt1"] - processed_df["bill_amt3"])
+        / (processed_df["bill_amt3"].abs() + 1.0)
     ).clip(-5, 5)
 
     # 6) Тренд платежей за 3 месяца: (pay1 - pay3) / (pay3 + 1)
-    processed_df["pay_trend"] = ((processed_df["pay_amt1"] - processed_df["pay_amt3"]) / (processed_df["pay_amt3"] + 1.0)).clip(-5, 5)
+    processed_df["pay_trend"] = (
+        (processed_df["pay_amt1"] - processed_df["pay_amt3"]) / (processed_df["pay_amt3"] + 1.0)
+    ).clip(-5, 5)
 
     # 7) Средние значения
     processed_df["bill_avg"] = processed_df[BILLING_COLUMNS].mean(axis=1)
@@ -103,8 +112,14 @@ def engineer_features(df: pd.DataFrame, config: dict) -> pd.DataFrame:
         "pay_amt_avg",
         "pay_to_bill_ratio",
     ]
-    base_columns_no_target = [c for c in REQUIRED_BASE_COLUMNS if c != "default_payment" and c in processed_df.columns]
-    columns = base_columns_no_target + new_feature_columns + (["default_payment"] if "default_payment" in processed_df.columns else [])
+    base_columns_no_target = [
+        c for c in REQUIRED_BASE_COLUMNS if c != "default_payment" and c in processed_df.columns
+    ]
+    columns = (
+        base_columns_no_target
+        + new_feature_columns
+        + (["default_payment"] if "default_payment" in processed_df.columns else [])
+    )
     return processed_df.loc[:, columns]
 
 

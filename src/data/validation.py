@@ -16,16 +16,36 @@ import yaml
 # Пытаемся использовать Great Expectations, но не завязываемся на DataContext
 try:
     from great_expectations.dataset import PandasDataset  # deprecated, но в 0.18.x ещё есть
+
     _HAS_GE = True
 except Exception:
     _HAS_GE = False
 
 # ---- Единая схема, чтобы не дублировать ----
 REQ_BASE_COLS = [
-    "limit_bal", "sex", "education", "marriage", "age",
-    "pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6",
-    "bill_amt1", "bill_amt2", "bill_amt3", "bill_amt4", "bill_amt5", "bill_amt6",
-    "pay_amt1", "pay_amt2", "pay_amt3", "pay_amt4", "pay_amt5", "pay_amt6",
+    "limit_bal",
+    "sex",
+    "education",
+    "marriage",
+    "age",
+    "pay_0",
+    "pay_2",
+    "pay_3",
+    "pay_4",
+    "pay_5",
+    "pay_6",
+    "bill_amt1",
+    "bill_amt2",
+    "bill_amt3",
+    "bill_amt4",
+    "bill_amt5",
+    "bill_amt6",
+    "pay_amt1",
+    "pay_amt2",
+    "pay_amt3",
+    "pay_amt4",
+    "pay_amt5",
+    "pay_amt6",
     "target",
 ]
 PAY_STATUS_COLS = ["pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6"]
@@ -57,19 +77,29 @@ def _ge_validate(df: pd.DataFrame) -> None:
 
     # Деньги/счета:
     # limit_bal >= 0; bill_amt* могут быть отрицательными; pay_amt* >= 0
-    ds.expect_column_values_to_be_between("limit_bal", min_value=0, max_value=None, allow_cross_type_comparisons=True)
+    ds.expect_column_values_to_be_between(
+        "limit_bal", min_value=0, max_value=None, allow_cross_type_comparisons=True
+    )
     for c in BILL_COLS:
-        ds.expect_column_values_to_be_between(c, min_value=-1e9, max_value=1e12, allow_cross_type_comparisons=True)
+        ds.expect_column_values_to_be_between(
+            c, min_value=-1e9, max_value=1e12, allow_cross_type_comparisons=True
+        )
     for c in PAY_AMT_COLS:
-        ds.expect_column_values_to_be_between(c, min_value=0, max_value=1e12, allow_cross_type_comparisons=True)
+        ds.expect_column_values_to_be_between(
+            c, min_value=0, max_value=1e12, allow_cross_type_comparisons=True
+        )
 
     res = ds.validate(result_format="SUMMARY")
     if not res.get("success", False):
         failed = []
         for r in res.get("results", []):
             if r.get("success") is False:
-                failed.append(r.get("expectation_config", {}).get("expectation_type", "unknown_expectation"))
-        raise AssertionError(f"Data validation failed (Great Expectations). Failed expectations: {sorted(set(failed))}")
+                failed.append(
+                    r.get("expectation_config", {}).get("expectation_type", "unknown_expectation")
+                )
+        raise AssertionError(
+            f"Data validation failed (Great Expectations). Failed expectations: {sorted(set(failed))}"
+        )
 
 
 def _pandas_validate(df: pd.DataFrame) -> None:
@@ -98,7 +128,9 @@ def _pandas_validate(df: pd.DataFrame) -> None:
         assert (df[c] >= 0).all(), f"{c} has negative values"
 
     # 5) Нет бесконечностей
-    assert ~df[REQ_BASE_COLS].applymap(lambda x: isinstance(x, float) and (math.isinf(x))).any().any(), "Inf detected"
+    assert (
+        ~df[REQ_BASE_COLS].applymap(lambda x: isinstance(x, float) and (math.isinf(x))).any().any()
+    ), "Inf detected"
 
 
 def validate_dataframe(df: pd.DataFrame, dataset_name: str = "dataset") -> None:
