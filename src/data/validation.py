@@ -29,8 +29,8 @@ REQ_BASE_COLS = [
     "target",
 ]
 PAY_STATUS_COLS = ["pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6"]
-BILL_COLS = ["bill_amt1","bill_amt2","bill_amt3","bill_amt4","bill_amt5","bill_amt6"]
-PAY_AMT_COLS = ["pay_amt1","pay_amt2","pay_amt3","pay_amt4","pay_amt5","pay_amt6"]
+BILL_COLS = ["bill_amt1", "bill_amt2", "bill_amt3", "bill_amt4", "bill_amt5", "bill_amt6"]
+PAY_AMT_COLS = ["pay_amt1", "pay_amt2", "pay_amt3", "pay_amt4", "pay_amt5", "pay_amt6"]
 
 
 def _ge_validate(df: pd.DataFrame) -> None:

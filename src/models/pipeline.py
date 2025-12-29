@@ -17,7 +17,6 @@ def get_feature_columns():
     - Engineered behavioral/time-series features
     - Low-cardinality categorical features
     """
-
     numeric_features = [
         "limit_bal", "age",
         "pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6",
@@ -39,7 +38,6 @@ def create_preprocessor():
     - categorical → most frequent + OneHotEncoder
         with handle_unknown='ignore' to avoid runtime failures
     """
-
     numeric_features, categorical_features = get_feature_columns()
 
     numeric_transformer = Pipeline(

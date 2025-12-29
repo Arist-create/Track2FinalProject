@@ -17,10 +17,10 @@ import pandas as pd
 import yaml
 
 # используем список исходных (preprocessor-input) фичей из пайплайна
-from .pipeline import get_feature_columns
+from src.models.pipeline import get_feature_columns
 
-DEFAULT_MODEL_PATH = "models/model.pkl"
-METRICS_PATH = "models/metrics.json"
+DEFAULT_MODEL_PATH = "trained_models/model.pkl"
+METRICS_PATH = "trained_models/metrics.json"
 
 def load_params() -> dict:
     with open("params.yaml", "r") as f:
