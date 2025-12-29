@@ -82,7 +82,7 @@ def test_validation_passes_on_clean_data(raw_data):
 
 
 def test_validation_fails_on_wrong_values(raw_data):
-    df = raw_data.copy()
+    df = preprocess_data(raw_data)
     df.loc[0, "sex"] = 99  # некорректное значение
 
     with pytest.raises(AssertionError):
