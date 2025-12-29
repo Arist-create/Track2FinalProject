@@ -113,7 +113,9 @@ def _pandas_validate(df: pd.DataFrame) -> None:
     assert set(df["sex"].unique()).issubset({1, 2}), "Unexpected values in 'sex'"
     assert set(df["education"].unique()).issubset({1, 2, 3, 4}), "Unexpected values in 'education'"
     assert set(df["marriage"].unique()).issubset({1, 2, 3}), "Unexpected values in 'marriage'"
-    assert set(df["default_payment"].unique()).issubset({0, 1}), "Unexpected values in 'default_payment'"
+    assert set(df["default_payment"].unique()).issubset(
+        {0, 1}
+    ), "Unexpected values in 'default_payment'"
 
     # 3) Диапазоны
     assert df["age"].between(18, 100).all(), "Age out of range [18,100]"
