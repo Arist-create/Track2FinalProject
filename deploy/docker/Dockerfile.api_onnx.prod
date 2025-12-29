@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Minimal runtime deps (NO sklearn/joblib/pandas)
-COPY deployment/docker/requirements.api_onnx.txt /app/requirements.api_onnx.txt
+COPY deploy/docker/requirements.api_onnx.txt /app/requirements.api_onnx.txt
 RUN python -m pip install --upgrade pip && \
     python -m pip install --no-cache-dir -r /app/requirements.api_onnx.txt
 
