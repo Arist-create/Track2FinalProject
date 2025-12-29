@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import pytest
 
-from src.data.make_dataset import optimize_dtypes, preprocess_data, organize_columns
+from src.data.make_dataset import optimize_dtypes, organize_columns, preprocess_data
 from src.data.validation import validate_dataframe
 
 warnings.filterwarnings("ignore")
