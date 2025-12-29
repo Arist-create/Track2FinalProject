@@ -13,13 +13,13 @@ echo "========== DVC =========="
 dvc repro || exit 1
 
 echo "========== ONNX VALIDATION =========="
-python scripts/model_training/onnx_validate.py || exit 1
+python utilities/model_training/onnx_validate.py || exit 1
 
 echo "========== QUANTIZATION =========="
-python scripts/model_training/quantize_onnx.py || exit 1
+python utilities/model_training/quantize_onnx.py || exit 1
 
 echo "========== BENCHMARK =========="
-python scripts/model_training/benchmark_inference.py || exit 1
+python utilities/model_training/benchmark_inference.py || exit 1
 
 echo "========== EVIDENTLY =========="
 python -m src.monitoring.evidently_drift || exit 1
@@ -33,7 +33,7 @@ curl -f http://localhost:8000/health || exit 1
 kill $API_PID
 
 echo "========== DOCKER =========="
-docker build -f deployment/docker/Dockerfile.api_onnx.prod -t credit-api:prod . || exit 1
+docker build -f deploy/docker/Dockerfile.api_onnx.prod -t credit-api:prod . || exit 1
 docker run -d -p 8000:8000 --name credit-api-test credit-api:prod || exit 1
 sleep 5
 curl -f http://localhost:8000/health || exit 1
@@ -41,7 +41,7 @@ docker stop credit-api-test
 docker rm credit-api-test
 
 echo "========== K8S =========="
-kubectl apply -f deployment/kubernetes/ || exit 1
+kubectl apply -f deploy/kubernetes/ || exit 1
 
 echo "========== TERRAFORM =========="
 terraform -chdir=infrastructure/environments/staging init -backend=false || exit 1

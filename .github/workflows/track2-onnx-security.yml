@@ -2,9 +2,9 @@ name: Track2 ONNX + Security
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
       # === ВАЖНО: подготовка данных ===
       - name: Prepare data for ONNX validation
         run: |
-          mkdir -p data/raw data/processed
+          mkdir -p raw_data/raw raw_data/processed
           python - <<'PY'
           import pandas as pd, numpy as np, os
           np.random.seed(42); n = 200
@@ -59,7 +59,7 @@ jobs:
               'PAY_AMT6': np.random.randint(0, 10000, n),
               'default.payment.next.month': np.random.choice([0, 1], n)
           })
-          df.to_csv("data/raw/UCI_Credit_Card.csv", index=False)
+          df.to_csv("raw_data/raw/UCI_Credit_Card.csv", index=False)
           PY
 
       - name: Run data preparation
@@ -70,13 +70,13 @@ jobs:
 
       # === ONNX pipeline ===
       - name: ONNX validate
-        run: python -u scripts/model_training/onnx_validate.py
+        run: python -u utilities/model_training/onnx_validate.py
 
       - name: Quantize ONNX
-        run: python -u scripts/model_training/quantize_onnx.py
+        run: python -u utilities/model_training/quantize_onnx.py
 
       - name: Benchmark
-        run: python -u scripts/model_training/benchmark_inference.py
+        run: python -u utilities/model_training/benchmark_inference.py
 
   docker-build-and-scan:
     needs: onnx-checks
@@ -87,7 +87,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build PROD image
-        run: docker build -f deployment/docker/Dockerfile.api_onnx.prod -t credit-api:prod .
+        run: docker build -f deploy/docker/Dockerfile.api_onnx.prod -t credit-api:prod .
 
       - name: Trivy scan
         uses: aquasecurity/trivy-action@0.24.0

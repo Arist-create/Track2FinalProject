@@ -19,7 +19,7 @@ exclude = '''
 profile = "black"
 line_length = 100
 skip_gitignore = true
-known_first_party = ["core"]
+known_first_party = ["src"]
 
 [tool.flake8]
 max-line-length = 100

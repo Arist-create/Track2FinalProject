@@ -27,11 +27,11 @@ echo
 echo "== 5) Обязательные файлы в Git =="
 required=(
   ".github/workflows/ci-cd.yml" "Dockerfile" "README.md" "SETUP_GUIDE.md" "mlflow_tracking.md"
-  "dvc.yaml" "dvc.lock" "params.yaml" "pyproject.toml" "requirements.txt" "notebooks/01_eda.ipynb"
+  "dvc.yaml" "dvc.lock" "params.yaml" "pyproject.toml" "requirements.txt" "analysis/01_eda.ipynb"
   "src/__init__.py" "src/data/make_dataset.py" "src/data/validation.py" "src/features/build_features.py"
   "src/models/pipeline.py" "src/models/train.py" "src/models/predict.py" "src/api/app.py"
-  "src/monitoring/drift.py" "src/monitoring/api_drift_test.py" "tests/test_data.py"
-  "tests/test_features.py" "tests/test_metrics.py"
+  "src/monitoring/drift.py" "src/monitoring/api_drift_test.py" "unit_tests/test_data.py"
+  "unit_tests/test_features.py" "unit_tests/test_metrics.py"
 )
 missing=0
 for f in "${required[@]}"; do
@@ -43,9 +43,9 @@ if [ $missing -eq 0 ]; then echo "✅ Все обязательные файлы
 echo
 
 echo "== 6) Не должно быть в Git =="
-echo "- raw CSV:"; git ls-files | grep -E '^data/raw/.*\.csv$' || echo "✅ ок"
-echo "- processed CSV:"; git ls-files | grep -E '^data/processed/.*\.csv$' || echo "✅ ок"
-echo "- модели/артефакты:"; git ls-files | grep -E '^models/.*\.(pkl|joblib|png|json)$' || echo "✅ ок"
+echo "- raw CSV:"; git ls-files | grep -E '^raw_data/raw/.*\.csv$' || echo "✅ ок"
+echo "- processed CSV:"; git ls-files | grep -E '^raw_data/processed/.*\.csv$' || echo "✅ ок"
+echo "- модели/артефакты:"; git ls-files | grep -E '^trained_models/.*\.(pkl|joblib|png|json)$' || echo "✅ ок"
 echo "- mlruns:"; git ls-files | grep -E '^mlruns/' || echo "✅ ок"
 echo "- дубликат workflow с пробелом:"; git ls-files | grep -E '\.github/workflows/ci-cd\.yml\s$' || echo "✅ ок"
 echo
@@ -53,4 +53,4 @@ echo
 echo "== 7) DVC статус =="
 dvc status || true
 echo "== 8) DVC файл для raw CSV =="
-git ls-files | grep 'data/raw/UCI_Credit_Card.csv.dvc' && echo "✅ DVC ok" || echo "❌ нет .dvc файла"
+git ls-files | grep 'raw_data/raw/UCI_Credit_Card.csv.dvc' && echo "✅ DVC ok" || echo "❌ нет .dvc файла"

@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # -------------------------------
 # 3. Copy project files
 # -------------------------------
-COPY core ./core
+COPY src ./src
 COPY trained_models ./trained_models
 COPY params.yaml .
 
@@ -53,4 +53,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # -------------------------------
 # 6. Start FastAPI app
 # -------------------------------
-CMD ["uvicorn", "core.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]

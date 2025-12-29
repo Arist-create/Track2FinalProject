@@ -54,12 +54,12 @@ Extends Track 1 to production by adding:
 
 The repository follows a **cookiecutter-data-science–style layout** with strict separation of concerns and full reproducibility.
 
-```
+```text
 .
 ├── raw_data/                # Raw and processed datasets (DVC tracked)
 ├── trained_models/          # Trained models, metrics, reports
 ├── analysis/                # EDA and exploratory analysis
-├── core/                    # Core application code
+├── src/                    # Core application code
 │   ├── data/                # Data loading, cleaning, validation
 │   ├── features/            # Feature engineering
 │   ├── models/              # Training and inference logic
@@ -93,7 +93,7 @@ The repository follows a **cookiecutter-data-science–style layout** with stric
 
 **Artifacts:**
 
-```
+```text
 trained_models/nn/credit_nn.pth
 trained_models/onnx/credit_nn.onnx
 trained_models/onnx/credit_nn_quant.onnx

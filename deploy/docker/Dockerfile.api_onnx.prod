@@ -19,7 +19,7 @@ RUN python -m pip install --upgrade pip && \
     python -m pip install --no-cache-dir -r /app/requirements.api_onnx.txt
 
 # Copy API + models needed for inference
-COPY core /app/core
+COPY src /app/src
 COPY trained_models/onnx /app/trained_models/onnx
 COPY trained_models/nn/feature_columns.json /app/trained_models/nn/feature_columns.json
 COPY trained_models/nn/scaler_params.json /app/trained_models/nn/scaler_params.json
@@ -33,4 +33,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -fs http://localhost:8000/health || exit 1
 
-CMD ["uvicorn", "core.api_onnx:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.api_onnx:app", "--host", "0.0.0.0", "--port", "8000"]

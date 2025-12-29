@@ -7,9 +7,9 @@ stages:
   # 1. PREPARE — загрузка и очистка сырых данных
   # ----------------------------------------------------------
   prepare:
-    cmd: python -m core.data.make_dataset
+    cmd: python -m src.data.make_dataset
     deps:
-      - core/data/make_dataset.py
+      - src/data/make_dataset.py
       - raw_data/raw/UCI_Credit_Card.csv
       - params.yaml
     params:
@@ -22,9 +22,9 @@ stages:
   # 2. FEATURES — инженерия признаков
   # ----------------------------------------------------------
   features:
-    cmd: python -m core.features.build_features
+    cmd: python -m src.features.build_features
     deps:
-      - core/features/build_features.py
+      - src/features/build_features.py
       - raw_data/processed/train.csv
       - raw_data/processed/test.csv
       - params.yaml
@@ -38,10 +38,10 @@ stages:
   # 3. TRAIN — обучение модели и логирование в MLflow
   # ----------------------------------------------------------
   train:
-    cmd: python -m core.models.train
+    cmd: python -m src.models.train
     deps:
-      - core/models/train.py
-      - core/models/pipeline.py
+      - src/models/train.py
+      - src/models/pipeline.py
       - raw_data/processed/train_features.csv
       - raw_data/processed/test_features.csv
       - params.yaml
@@ -63,9 +63,9 @@ stages:
   # 4. DRIFT — контроль дрифта данных (Population Stability Index)
   # ----------------------------------------------------------
   drift:
-    cmd: python -m core.monitoring.drift
+    cmd: python -m src.monitoring.drift
     deps:
-      - core/monitoring/drift.py
+      - src/monitoring/drift.py
       - raw_data/processed/train_features.csv
       - raw_data/processed/test_features.csv
       - trained_models/model.pkl

@@ -35,7 +35,7 @@ RUN pip install --upgrade pip && \
 # -------------------------------
 # 4. Copy application files
 # -------------------------------
-COPY core /app/core
+COPY src /app/src
 COPY trained_models/nn /app/trained_models/nn
 COPY trained_models/onnx /app/trained_models/onnx
 COPY params.yaml /app/params.yaml
@@ -48,4 +48,4 @@ EXPOSE 8000
 # -------------------------------
 # 6. Start API
 # -------------------------------
-CMD ["uvicorn", "core.api_onnx:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "src.api_onnx:app", "--host", "0.0.0.0", "--port", "8000"]

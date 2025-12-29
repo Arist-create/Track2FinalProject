@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -29,16 +29,16 @@ jobs:
           pip install pytest pytest-cov black isort flake8 dvc
 
       - name: Lint (black)
-        run: black --check src tests
+        run: black --check src unit_tests
 
       - name: Lint (isort)
-        run: isort --check-only src tests
+        run: isort --check-only src unit_tests
 
       - name: Lint (flake8)
-        run: flake8 src tests
+        run: flake8 src unit_tests
 
       - name: Create data directories
-        run: mkdir -p data/raw data/processed models
+        run: mkdir -p raw_data/raw raw_data/processed trained_models
 
       - name: Generate mock dataset
         run: |
@@ -72,8 +72,8 @@ jobs:
               'PAY_AMT6': np.random.randint(0, 10000, n),
               'default.payment.next.month': np.random.choice([0, 1], n, p=[0.78, 0.22])
           })
-          os.makedirs("data/raw", exist_ok=True)
-          df.to_csv("data/raw/UCI_Credit_Card.csv", index=False)
+          os.makedirs("raw_data/raw", exist_ok=True)
+          df.to_csv("raw_data/raw/UCI_Credit_Card.csv", index=False)
           PY
 
       - name: Run data preparation
