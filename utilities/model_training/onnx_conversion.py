@@ -7,13 +7,13 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-DATA_PATH = "data/processed/train.csv"
+DATA_PATH = "raw_data/processed/train.csv"
 
-PT_MODEL_PATH = "models/nn/credit_nn.pth"
-SCALER_PATH = "models/nn/scaler.joblib"
-FEATURES_PATH = "models/nn/feature_columns.json"
+PT_MODEL_PATH = "trained_models/nn/credit_nn.pth"
+SCALER_PATH = "trained_models/nn/scaler.joblib"
+FEATURES_PATH = "trained_models/nn/feature_columns.json"
 
-ONNX_DIR = "models/onnx"
+ONNX_DIR = "trained_models/onnx"
 ONNX_MODEL_PATH = f"{ONNX_DIR}/credit_nn.onnx"
 
 os.makedirs(ONNX_DIR, exist_ok=True)

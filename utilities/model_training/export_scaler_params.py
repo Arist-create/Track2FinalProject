@@ -7,9 +7,9 @@ import joblib
 import numpy as np
 
 
-SCALER_PATH = Path("models/nn/scaler.joblib")
-FEATURES_PATH = Path("models/nn/feature_columns.json")
-OUT_PATH = Path("models/nn/scaler_params.json")
+SCALER_PATH = Path("trained_models/nn/scaler.joblib")
+FEATURES_PATH = Path("trained_models/nn/feature_columns.json")
+OUT_PATH = Path("trained_models/nn/scaler_params.json")
 
 
 def main():

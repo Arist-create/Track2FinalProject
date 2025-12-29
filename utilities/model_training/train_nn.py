@@ -22,10 +22,10 @@ from sklearn.metrics import roc_auc_score
 # =============================
 # CONFIG
 # =============================
-DATA_PATH = "data/processed/train.csv"
-TARGET_COL = "target"
+DATA_PATH = "raw_data/processed/train.csv"
+TARGET_COL = "default_payment"
 
-MODEL_DIR = "models/nn"
+MODEL_DIR = "trained_models/nn"
 MODEL_PATH = f"{MODEL_DIR}/credit_nn.pth"
 SCALER_PATH = f"{MODEL_DIR}/scaler.joblib"
 FEATURES_PATH = f"{MODEL_DIR}/feature_columns.json"

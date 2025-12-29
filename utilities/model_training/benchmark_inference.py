@@ -9,15 +9,15 @@ import onnxruntime as ort
 import torch
 import torch.nn as nn
 
-DATA_PATH = "data/processed/train.csv"
+DATA_PATH = "raw_data/processed/train.csv"
 
-FEATURES_PATH = "models/nn/feature_columns.json"
-SCALER_PATH = "models/nn/scaler.joblib"
+FEATURES_PATH = "trained_models/nn/feature_columns.json"
+SCALER_PATH = "trained_models/nn/scaler.joblib"
 
-PT_MODEL_PATH = "models/nn/credit_nn.pth"
+PT_MODEL_PATH = "trained_models/nn/credit_nn.pth"
 
-ONNX_FP32 = "models/onnx/credit_nn.onnx"
-ONNX_INT8 = "models/onnx/credit_nn_quant.onnx"
+ONNX_FP32 = "trained_models/onnx/credit_nn.onnx"
+ONNX_INT8 = "trained_models/onnx/credit_nn_quant.onnx"
 
 N_REQUESTS = 5000
 WARMUP = 300

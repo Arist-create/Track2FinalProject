@@ -3,8 +3,8 @@
 import os
 from onnxruntime.quantization import quantize_dynamic, QuantType
 
-ONNX_MODEL_PATH = "models/onnx/credit_nn.onnx"
-ONNX_QUANT_PATH = "models/onnx/credit_nn_quant.onnx"
+ONNX_MODEL_PATH = "trained_models/onnx/credit_nn.onnx"
+ONNX_QUANT_PATH = "trained_models/onnx/credit_nn_quant.onnx"
 
 # Квантование (динамическое) — самое простое и стабильное
 quantize_dynamic(

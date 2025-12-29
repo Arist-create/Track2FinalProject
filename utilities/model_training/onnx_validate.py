@@ -8,13 +8,13 @@ import onnxruntime as ort
 import torch
 import torch.nn as nn
 
-DATA_PATH = "data/processed/train.csv"
+DATA_PATH = "raw_data/processed/train.csv"
 
-FEATURES_PATH = "models/nn/feature_columns.json"
-SCALER_PATH = "models/nn/scaler.joblib"
-TORCH_PATH = "models/nn/credit_nn.pth"
+FEATURES_PATH = "trained_models/nn/feature_columns.json"
+SCALER_PATH = "trained_models/nn/scaler.joblib"
+TORCH_PATH = "trained_models/nn/credit_nn.pth"
 
-ONNX_PATH = "models/onnx/credit_nn.onnx"
+ONNX_PATH = "trained_models/onnx/credit_nn.onnx"
 
 N_SAMPLES = 256
 SEED = 42
