@@ -68,7 +68,7 @@ def _ge_validate(df: pd.DataFrame) -> None:
     ds.expect_column_values_to_be_in_set("sex", [1, 2])
     ds.expect_column_values_to_be_in_set("education", [1, 2, 3, 4])
     ds.expect_column_values_to_be_in_set("marriage", [1, 2, 3])
-    ds.expect_column_values_to_be_in_set("target", [0, 1])
+    ds.expect_column_values_to_be_in_set("default_payment", [0, 1])
 
     # Диапазоны
     ds.expect_column_values_to_be_between("age", min_value=18, max_value=100)
