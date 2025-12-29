@@ -1,0 +1,201 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m src.data.make_dataset
+    deps:
+    - path: data/raw/UCI_Credit_Card.csv
+      hash: md5
+      md5: 940b416bb13a9b24bb5c9e1589284005
+      size: 2862995
+    - path: params.yaml
+      hash: md5
+      md5: 8149a8d5f5af342a87efe77ea18b05fc
+      size: 1244
+    - path: src/data/make_dataset.py
+      hash: md5
+      md5: be461e88e1f37a2da1a5ab7b350edcea
+      size: 4815
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/UCI_Credit_Card.csv
+          processed_path: data/processed/
+          train_raw_path: data/processed/train.csv
+          test_raw_path: data/processed/test.csv
+          train_features_path: data/processed/train_features.csv
+          test_features_path: data/processed/test_features.csv
+          test_size: 0.2
+          random_state: 42
+          target: target
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: ea00658a1b5a54f88dd61e6ce9f75be0
+      size: 696050
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 23ac3ff19a2b13e36efecd90d406a6c0
+      size: 2782435
+  features:
+    cmd: python -m src.features.build_features
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: ea00658a1b5a54f88dd61e6ce9f75be0
+      size: 696050
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 23ac3ff19a2b13e36efecd90d406a6c0
+      size: 2782435
+    - path: params.yaml
+      hash: md5
+      md5: 8149a8d5f5af342a87efe77ea18b05fc
+      size: 1244
+    - path: src/features/build_features.py
+      hash: md5
+      md5: 27a455250a14f2ce4d67283ba8ed9e86
+      size: 5055
+    params:
+      params.yaml:
+        features:
+          age_bins:
+          - 18
+          - 30
+          - 45
+          - 60
+          - 100
+          age_labels:
+          - young
+          - middle
+          - senior
+          - elderly
+    outs:
+    - path: data/processed/test_features.csv
+      hash: md5
+      md5: 8973058a7607c6be3a95e565f1cde60f
+      size: 1313209
+    - path: data/processed/train_features.csv
+      hash: md5
+      md5: de9a73215339fb70258918714ebb6611
+      size: 5254625
+  train:
+    cmd: python -m src.models.train
+    deps:
+    - path: data/processed/test_features.csv
+      hash: md5
+      md5: 8973058a7607c6be3a95e565f1cde60f
+      size: 1313209
+    - path: data/processed/train_features.csv
+      hash: md5
+      md5: de9a73215339fb70258918714ebb6611
+      size: 5254625
+    - path: params.yaml
+      hash: md5
+      md5: 8149a8d5f5af342a87efe77ea18b05fc
+      size: 1244
+    - path: src/models/pipeline.py
+      hash: md5
+      md5: 19dfa0d51d3924a975d2cf39d564e73a
+      size: 3295
+    - path: src/models/train.py
+      hash: md5
+      md5: 1ee3c0f1c022e989dff711eeb3b53e89
+      size: 10290
+    params:
+      params.yaml:
+        mlflow:
+          tracking_uri: ./mlruns
+          experiment_name: credit_scoring
+        model:
+          algorithm: gradient_boosting
+          random_state: 42
+          logistic_regression:
+            penalty: l2
+            C: 1.0
+            max_iter: 1000
+            solver: lbfgs
+            class_weight: balanced
+          random_forest:
+            n_estimators: 50
+            max_depth: 10
+            min_samples_split: 20
+            min_samples_leaf: 10
+            class_weight: balanced
+            random_state: 42
+          gradient_boosting:
+            n_estimators: 50
+            learning_rate: 0.1
+            max_depth: 5
+            min_samples_split: 20
+            min_samples_leaf: 10
+            random_state: 42
+        training:
+          cv_folds: 3
+          scoring: roc_auc
+    outs:
+    - path: models/confusion_best.png
+      hash: md5
+      md5: ed989b70822e974e258d91547d6a14ea
+      size: 16165
+    - path: models/confusion_default.png
+      hash: md5
+      md5: df05e08440e589de55729ca9edd3524f
+      size: 15828
+    - path: models/metrics.json
+      hash: md5
+      md5: 43ea4628f2d72d7acd956b4ffbdcf5fb
+      size: 428
+    - path: models/model.pkl
+      hash: md5
+      md5: 2860fcebb98810b8b009244bd2a83f24
+      size: 574253
+    - path: models/pr_curve.png
+      hash: md5
+      md5: ff5b41e492589a8fdd21c37e873e0623
+      size: 24505
+    - path: models/roc_curve.png
+      hash: md5
+      md5: fa7cc0f786b1a4b53d5630424e49a05e
+      size: 25772
+  drift:
+    cmd: python -m src.monitoring.drift
+    deps:
+    - path: data/processed/test_features.csv
+      hash: md5
+      md5: 8973058a7607c6be3a95e565f1cde60f
+      size: 1313209
+    - path: data/processed/train_features.csv
+      hash: md5
+      md5: de9a73215339fb70258918714ebb6611
+      size: 5254625
+    - path: models/model.pkl
+      hash: md5
+      md5: 2860fcebb98810b8b009244bd2a83f24
+      size: 574253
+    - path: params.yaml
+      hash: md5
+      md5: 8149a8d5f5af342a87efe77ea18b05fc
+      size: 1244
+    - path: src/monitoring/drift.py
+      hash: md5
+      md5: dea58cae26c28556b1053aa702891540
+      size: 324
+    params:
+      params.yaml:
+        monitoring:
+          psi_threshold: 0.25
+          buckets: 10
+          features_to_monitor:
+          - utilization_last
+          - pay_delay_sum
+          - pay_delay_max
+          - bill_trend
+          - pay_trend
+          - bill_avg
+          - pay_amt_avg
+          - pay_to_bill_ratio
+    outs:
+    - path: models/drift_report.json
+      hash: md5
+      md5: 528045491d5639d960826af4e1e00f22
+      size: 1298

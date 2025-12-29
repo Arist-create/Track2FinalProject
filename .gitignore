@@ -1,0 +1,63 @@
+# ======================
+# Python
+# ======================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ======================
+# Jupyter / Pytest
+# ======================
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+
+# ======================
+# Virtual environments
+# ======================
+venv/
+.venv/
+.env/
+.envrc
+
+# ======================
+# Data & models (local artifacts)
+# ======================
+raw_data/processed/
+trained_models/*.pkl
+trained_models/*.png
+models/*.json
+
+# ======================
+# DVC & MLflow (local only)
+# ======================
+.dvc/cache/
+mlruns/
+
+# ======================
+# Terraform
+# ======================
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+
+# ======================
+# Logs & temp
+# ======================
+*.log
+*.tmp
+
+# ======================
+# IDE / System
+# ======================
+.vscode/
+.idea/
+
+# ======================
+# Allow raw dataset + DVC pointer
+# ======================
+!data/raw/
+!data/raw/UCI_Credit_Card.csv
+!data/raw/UCI_Credit_Card.csv.dvc

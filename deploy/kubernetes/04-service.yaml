@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: credit-api
+  namespace: credit-staging
+  labels:
+    app: credit-api
+spec:
+  type: ClusterIP
+  selector:
+    app: credit-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: credit-api
+  namespace: credit-prod
+  labels:
+    app: credit-api
+spec:
+  type: ClusterIP
+  selector:
+    app: credit-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000

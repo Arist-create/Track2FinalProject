@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: credit-api-config
+  namespace: credit-staging
+data:
+  APP_ENV: "staging"
+  MODEL_ONNX_PATH: "/app/models/onnx/credit_nn.onnx"
+  MODEL_ONNX_QUANT_PATH: "/app/models/onnx/credit_nn_quant.onnx"
+  FEATURE_COLS_PATH: "/app/models/nn/feature_columns.json"
+  SCALER_PARAMS_PATH: "/app/models/nn/scaler_params.json"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: credit-api-config
+  namespace: credit-prod
+data:
+  APP_ENV: "prod"
+  MODEL_ONNX_PATH: "/app/models/onnx/credit_nn.onnx"
+  MODEL_ONNX_QUANT_PATH: "/app/models/onnx/credit_nn_quant.onnx"
+  FEATURE_COLS_PATH: "/app/models/nn/feature_columns.json"
+  SCALER_PARAMS_PATH: "/app/models/nn/scaler_params.json"

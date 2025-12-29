@@ -1,0 +1,49 @@
+{
+    "id": null,
+    "uid": "credit-api-monitoring",
+    "title": "Credit API Monitoring",
+    "tags": ["ml", "credit-scoring", "api"],
+    "timezone": "browser",
+    "schemaVersion": 36,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "HTTP Request Rate",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total[1m]))",
+            "legendFormat": "requests/sec"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Inference Latency (p95)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(model_inference_latency_seconds_bucket[1m]))",
+            "legendFormat": "p95 latency"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "timeseries",
+        "title": "HTTP Error Rate",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total{status=~\"5..\"}[1m]))",
+            "legendFormat": "5xx errors/sec"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      }
+    ]
+  }
+  

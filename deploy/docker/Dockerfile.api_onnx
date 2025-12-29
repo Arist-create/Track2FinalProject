@@ -1,0 +1,51 @@
+# ======================================================
+# Production Dockerfile — ONNX Credit Risk Assessment API
+# ======================================================
+
+FROM python:3.12-slim
+
+# -------------------------------
+# 1. Base system setup
+# -------------------------------
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# -------------------------------
+# 2. System dependencies
+# Required for numpy / pandas / scikit-learn wheels or build
+# -------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    gcc \
+    g++ \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+# -------------------------------
+# 3. Python dependencies
+# -------------------------------
+COPY requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r /app/requirements.txt
+
+# -------------------------------
+# 4. Copy application files
+# -------------------------------
+COPY core /app/core
+COPY trained_models/nn /app/trained_models/nn
+COPY trained_models/onnx /app/trained_models/onnx
+COPY params.yaml /app/params.yaml
+
+# -------------------------------
+# 5. Runtime settings
+# -------------------------------
+EXPOSE 8000
+
+# -------------------------------
+# 6. Start API
+# -------------------------------
+CMD ["uvicorn", "core.api_onnx:app", "--host", "0.0.0.0", "--port", "8000"]

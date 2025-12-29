@@ -1,0 +1,63 @@
+dataset:
+  raw_location: raw_data/raw/UCI_Credit_Card.csv
+  processed_location: raw_data/processed/
+  train_raw_location: raw_data/processed/train.csv
+  test_raw_location: raw_data/processed/test.csv
+  train_features_location: raw_data/processed/train_features.csv
+  test_features_location: raw_data/processed/test_features.csv
+  test_size: 0.2
+  random_state: 42
+  label_column: default_payment
+feature_engineering:
+  age_bins:
+    - 18
+    - 30
+    - 45
+    - 60
+    - 100
+  age_labels:
+    - young
+    - middle
+    - senior
+    - elderly
+model_config:
+  selected_algorithm: gradient_boosting
+  random_state: 42
+  logistic_regression:
+    penalty: l2
+    C: 1.0
+    max_iter: 1000
+    solver: lbfgs
+    class_weight: balanced
+  random_forest:
+    n_estimators: 50
+    max_depth: 10
+    min_samples_split: 20
+    min_samples_leaf: 10
+    class_weight: balanced
+    random_state: 42
+  gradient_boosting:
+    n_estimators: 50
+    learning_rate: 0.1
+    max_depth: 5
+    min_samples_split: 20
+    min_samples_leaf: 10
+    random_state: 42
+training_config:
+  cv_folds: 3
+  scoring: roc_auc
+experiment_tracking:
+  tracking_uri: ./mlruns
+  experiment_name: credit_risk_assessment
+drift_monitoring:
+  stability_threshold: 0.25
+  bin_count: 10
+  key_features:
+    - utilization_last
+    - pay_delay_sum
+    - pay_delay_max
+    - bill_trend
+    - pay_trend
+    - bill_avg
+    - pay_amt_avg
+    - pay_to_bill_ratio

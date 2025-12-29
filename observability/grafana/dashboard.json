@@ -1,0 +1,13 @@
+{
+    "title": "Credit Scoring API",
+    "panels": [
+      {
+        "type": "text",
+        "title": "API Status",
+        "options": {
+          "content": "Monitoring enabled"
+        }
+      }
+    ]
+  }
+  

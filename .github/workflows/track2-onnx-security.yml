@@ -1,0 +1,99 @@
+name: Track2 ONNX + Security
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  onnx-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # === ВАЖНО: подготовка данных ===
+      - name: Prepare data for ONNX validation
+        run: |
+          mkdir -p data/raw data/processed
+          python - <<'PY'
+          import pandas as pd, numpy as np, os
+          np.random.seed(42); n = 200
+          df = pd.DataFrame({
+              'ID': range(1, n+1),
+              'LIMIT_BAL': np.random.randint(10000, 100000, n),
+              'SEX': np.random.choice([1, 2], n),
+              'EDUCATION': np.random.choice([1, 2, 3, 4], n),
+              'MARRIAGE': np.random.choice([1, 2, 3], n),
+              'AGE': np.random.randint(21, 70, n),
+              'PAY_0': np.random.randint(-2, 3, n),
+              'PAY_2': np.random.randint(-2, 3, n),
+              'PAY_3': np.random.randint(-2, 3, n),
+              'PAY_4': np.random.randint(-2, 3, n),
+              'PAY_5': np.random.randint(-2, 3, n),
+              'PAY_6': np.random.randint(-2, 3, n),
+              'BILL_AMT1': np.random.randint(0, 50000, n),
+              'BILL_AMT2': np.random.randint(0, 50000, n),
+              'BILL_AMT3': np.random.randint(0, 50000, n),
+              'BILL_AMT4': np.random.randint(0, 50000, n),
+              'BILL_AMT5': np.random.randint(0, 50000, n),
+              'BILL_AMT6': np.random.randint(0, 50000, n),
+              'PAY_AMT1': np.random.randint(0, 10000, n),
+              'PAY_AMT2': np.random.randint(0, 10000, n),
+              'PAY_AMT3': np.random.randint(0, 10000, n),
+              'PAY_AMT4': np.random.randint(0, 10000, n),
+              'PAY_AMT5': np.random.randint(0, 10000, n),
+              'PAY_AMT6': np.random.randint(0, 10000, n),
+              'default.payment.next.month': np.random.choice([0, 1], n)
+          })
+          df.to_csv("data/raw/UCI_Credit_Card.csv", index=False)
+          PY
+
+      - name: Run data preparation
+        run: python -m src.data.make_dataset
+
+      - name: Run feature engineering
+        run: python -m src.features.build_features
+
+      # === ONNX pipeline ===
+      - name: ONNX validate
+        run: python -u scripts/model_training/onnx_validate.py
+
+      - name: Quantize ONNX
+        run: python -u scripts/model_training/quantize_onnx.py
+
+      - name: Benchmark
+        run: python -u scripts/model_training/benchmark_inference.py
+
+  docker-build-and-scan:
+    needs: onnx-checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build PROD image
+        run: docker build -f deployment/docker/Dockerfile.api_onnx.prod -t credit-api:prod .
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: "credit-api:prod"
+          format: "table"
+          exit-code: "0"
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"

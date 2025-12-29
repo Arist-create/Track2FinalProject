@@ -1,0 +1,77 @@
+# ============================================================
+# DVC Pipeline — end-to-end ML workflow for Credit Risk Assessment
+# ============================================================
+
+stages:
+  # ----------------------------------------------------------
+  # 1. PREPARE — загрузка и очистка сырых данных
+  # ----------------------------------------------------------
+  prepare:
+    cmd: python -m core.data.make_dataset
+    deps:
+      - core/data/make_dataset.py
+      - raw_data/raw/UCI_Credit_Card.csv
+      - params.yaml
+    params:
+      - data
+    outs:
+      - raw_data/processed/train.csv
+      - raw_data/processed/test.csv
+
+  # ----------------------------------------------------------
+  # 2. FEATURES — инженерия признаков
+  # ----------------------------------------------------------
+  features:
+    cmd: python -m core.features.build_features
+    deps:
+      - core/features/build_features.py
+      - raw_data/processed/train.csv
+      - raw_data/processed/test.csv
+      - params.yaml
+    params:
+      - features
+    outs:
+      - raw_data/processed/train_features.csv
+      - raw_data/processed/test_features.csv
+
+  # ----------------------------------------------------------
+  # 3. TRAIN — обучение модели и логирование в MLflow
+  # ----------------------------------------------------------
+  train:
+    cmd: python -m core.models.train
+    deps:
+      - core/models/train.py
+      - core/models/pipeline.py
+      - raw_data/processed/train_features.csv
+      - raw_data/processed/test_features.csv
+      - params.yaml
+    params:
+      - model
+      - training
+      - mlflow
+    outs:
+      - trained_models/model.pkl
+      - trained_models/roc_curve.png
+      - trained_models/pr_curve.png
+      - trained_models/confusion_default.png
+      - trained_models/confusion_best.png
+    metrics:
+      - trained_models/metrics.json:
+          cache: false
+
+  # ----------------------------------------------------------
+  # 4. DRIFT — контроль дрифта данных (Population Stability Index)
+  # ----------------------------------------------------------
+  drift:
+    cmd: python -m core.monitoring.drift
+    deps:
+      - core/monitoring/drift.py
+      - raw_data/processed/train_features.csv
+      - raw_data/processed/test_features.csv
+      - trained_models/model.pkl
+      - params.yaml
+    params:
+      - monitoring
+    metrics:
+      - trained_models/drift_report.json:
+          cache: false
