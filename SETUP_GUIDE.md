@@ -27,16 +27,7 @@ dvc --version
 mlflow --version
 
 
-2. PROJECT INITIALIZATION
-──────────────────────────────────────────────────────────────
-git clone https://github.com/Jokeera/Alexander_Tarakanov_Track_1_Final_Project.git
-cd Alexander_Tarakanov_Track_1_Final_Project
-
-If DVC remote storage is configured:
-dvc pull
-
-
-3. RUNNING THE FULL ML PIPELINE
+2. RUNNING THE FULL ML PIPELINE
 ──────────────────────────────────────────────────────────────
 Execute the entire automated workflow:
 dvc repro

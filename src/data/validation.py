@@ -46,7 +46,7 @@ REQ_BASE_COLS = [
     "pay_amt4",
     "pay_amt5",
     "pay_amt6",
-    "target",
+    "default_payment",
 ]
 PAY_STATUS_COLS = ["pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6"]
 BILL_COLS = ["bill_amt1", "bill_amt2", "bill_amt3", "bill_amt4", "bill_amt5", "bill_amt6"]
@@ -113,7 +113,7 @@ def _pandas_validate(df: pd.DataFrame) -> None:
     assert set(df["sex"].unique()).issubset({1, 2}), "Unexpected values in 'sex'"
     assert set(df["education"].unique()).issubset({1, 2, 3, 4}), "Unexpected values in 'education'"
     assert set(df["marriage"].unique()).issubset({1, 2, 3}), "Unexpected values in 'marriage'"
-    assert set(df["target"].unique()).issubset({0, 1}), "Unexpected values in 'target'"
+    assert set(df["default_payment"].unique()).issubset({0, 1}), "Unexpected values in 'default_payment'"
 
     # 3) Диапазоны
     assert df["age"].between(18, 100).all(), "Age out of range [18,100]"
@@ -129,7 +129,7 @@ def _pandas_validate(df: pd.DataFrame) -> None:
 
     # 5) Нет бесконечностей
     assert (
-        ~df[REQ_BASE_COLS].applymap(lambda x: isinstance(x, float) and (math.isinf(x))).any().any()
+        ~df[REQ_BASE_COLS].map(lambda x: isinstance(x, float) and (math.isinf(x))).any().any()
     ), "Inf detected"
 
 

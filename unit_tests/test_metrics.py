@@ -3,7 +3,7 @@
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from src.models.train import calculate_metrics
+from src.models.train import compute_classification_metrics
 
 # Берём каноничную реализацию PSI и оборачиваем её обработкой edge-cейсов
 from src.monitoring.api_drift_test import psi_score as _psi_score
@@ -16,13 +16,13 @@ def calculate_psi(expected: np.ndarray, actual: np.ndarray, buckets: int = 10) -
     return _psi_score(expected, actual, buckets=buckets)
 
 
-def test_calculate_metrics_perfect():
+def test_compute_classification_metrics_perfect():
     """Perfect predictions -> все основные метрики на максимуме."""
     y_true = np.array([0, 0, 1, 1])
     y_pred = np.array([0, 0, 1, 1])
     y_proba = np.array([0.1, 0.2, 0.8, 0.9])
 
-    metrics = calculate_metrics(y_true, y_pred, y_proba)
+    metrics = compute_classification_metrics(y_true, y_pred, y_proba)
 
     for key in ["roc_auc", "f1_score", "precision", "recall", "pr_auc"]:
         assert key in metrics
@@ -34,14 +34,14 @@ def test_calculate_metrics_perfect():
     assert 0.99 <= metrics["pr_auc"] <= 1.0
 
 
-def test_calculate_metrics_random():
+def test_compute_classification_metrics_random():
     """Случайные предсказания -> метрики в допустимом диапазоне."""
     np.random.seed(42)
     y_true = np.random.randint(0, 2, 1000)
     y_proba = np.random.random(1000)
     y_pred = (y_proba > 0.5).astype(int)
 
-    metrics = calculate_metrics(y_true, y_pred, y_proba)
+    metrics = compute_classification_metrics(y_true, y_pred, y_proba)
 
     # ключи присутствуют
     for key in ["roc_auc", "f1_score", "precision", "recall", "pr_auc"]:
@@ -98,7 +98,7 @@ def test_metrics_binary_classification():
     y_pred = np.array([0, 0, 1, 0, 1, 1])
     y_proba = np.array([0.1, 0.2, 0.6, 0.4, 0.7, 0.9])
 
-    metrics = calculate_metrics(y_true, y_pred, y_proba)
+    metrics = compute_classification_metrics(y_true, y_pred, y_proba)
 
     expected_precision = 2 / 3  # TP=2, FP=1
     expected_recall = 2 / 3  # TP=2, FN=1
@@ -129,7 +129,7 @@ def test_metrics_imbalanced_data():
     )
     y_pred = (y_proba >= 0.5).astype(int)
 
-    metrics = calculate_metrics(y_true, y_pred, y_proba)
+    metrics = compute_classification_metrics(y_true, y_pred, y_proba)
 
     # Все метрики в допустимом диапазоне
     for v in metrics.values():

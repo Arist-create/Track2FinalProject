@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import pytest
 
-from src.data.make_dataset import cast_dtypes, clean_data, reorder_columns
+from src.data.make_dataset import optimize_dtypes, preprocess_data, organize_columns
 from src.data.validation import validate_dataframe
 
 warnings.filterwarnings("ignore")
@@ -39,13 +39,13 @@ def raw_data():
             "pay_amt4": [800, 1300],
             "pay_amt5": [900, 1400],
             "pay_amt6": [1000, 1500],
-            "target": [0, 1],
+            "default_payment_next_month": [0, 1],
         }
     )
 
 
 def test_clean_data(raw_data):
-    df = clean_data(raw_data)
+    df = preprocess_data(raw_data)
 
     assert "education" in df.columns
     assert sorted(df["education"].unique()) == [2, 4]
@@ -57,24 +57,26 @@ def test_clean_data(raw_data):
 
 
 def test_cast_dtypes(raw_data):
-    df = cast_dtypes(raw_data)
+    df = preprocess_data(raw_data)
+    df = optimize_dtypes(df)
 
     assert df["sex"].dtype == "int16"
     assert df["limit_bal"].dtype == "float64"
-    assert df["target"].dtype == "int8"
+    assert df["default_payment"].dtype == "int8"
 
 
 def test_reorder_columns(raw_data):
-    df = reorder_columns(raw_data)
+    df = preprocess_data(raw_data)
+    df = organize_columns(df)
 
-    assert list(df.columns)[-1] == "target"
+    assert list(df.columns)[-1] == "default_payment"
     assert "pay_amt1" in df.columns  # порядок сохранён
 
 
 def test_validation_passes_on_clean_data(raw_data):
-    df = clean_data(raw_data)
-    df = cast_dtypes(df)
-    df = reorder_columns(df)
+    df = preprocess_data(raw_data)
+    df = optimize_dtypes(df)
+    df = organize_columns(df)
 
     validate_dataframe(df)  # должно пройти без ошибок
 
